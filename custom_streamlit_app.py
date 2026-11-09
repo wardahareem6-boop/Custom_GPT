@@ -65,25 +65,68 @@ def save_chat(chat_id, messages):
 
 st.set_page_config(page_title='Nova | Your AI workspace', layout='wide')
 
-st.markdown('''<style>
+st.session_state.setdefault('appearance', 'System')
+appearance_themes = {
+    'Light': '''
+:root {--nova-bg:#f8fafc; --nova-panel:#ffffff; --nova-text:#172033; --nova-muted:#64748b; --nova-border:#e2e8f0; --nova-accent:#4f46e5; --nova-input:#ffffff;}
+''',
+    'Dark': '''
+:root {--nova-bg:#0b1020; --nova-panel:#141e33; --nova-text:#e8edf8; --nova-muted:#a5b3cf; --nova-border:#283550; --nova-accent:#a5b4fc; --nova-input:#17233a;}
+''',
+    'System': '''
+:root {--nova-bg:#f8fafc; --nova-panel:#ffffff; --nova-text:#172033; --nova-muted:#64748b; --nova-border:#e2e8f0; --nova-accent:#4f46e5; --nova-input:#ffffff;}
+@media (prefers-color-scheme:dark) {
+    :root {--nova-bg:#0b1020; --nova-panel:#141e33; --nova-text:#e8edf8; --nova-muted:#a5b3cf; --nova-border:#283550; --nova-accent:#a5b4fc; --nova-input:#17233a;}
+}
+''',
+}
+
+st.markdown('<style>' + appearance_themes[st.session_state.appearance] + '''
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-html, body, [class*="css"], .stApp {font-family: Inter, sans-serif;}
-.stApp {background: radial-gradient(ellipse at 70% 0%, #182445 0%, #0b1020 55%); color:#e8edf8;}
-[data-testid="stHeader"] {background:transparent;}
-[data-testid="stSidebar"] {background:#10182b; border-right:1px solid #26314b;}
-[data-testid="stSidebar"] * {color:#e8edf8;}
-.block-container {max-width:1080px; padding-top:3rem; padding-bottom:3rem;}
-.brand {font-size:1.5rem; font-weight:800; letter-spacing:.12em; color:#a5b4fc;}
-.eyebrow {color:#a5b4fc; font-size:.75rem; letter-spacing:.18em; font-weight:700; margin-top:1rem;}
-.hero {font-size:clamp(2rem,5vw,3.5rem); line-height:1.15; font-weight:800; letter-spacing:-.045em; margin:1rem 0; color:#f2f5ff;}
-.subtitle {color:#a5b3cf; font-size:1.05rem; line-height:1.7; max-width:620px; margin-bottom:2rem;}
-.pill {display:inline-block; padding:7px 12px; border:1px solid #354566; border-radius:30px; color:#b5c8ed; font-size:.8rem;}
-[data-testid="stChatMessage"] {background:#141e33; border:1px solid #283550; border-radius:18px; margin:1rem 0; padding:1.1rem;}
-[data-testid="stBottom"] > div {background:#0b1020;}
-[data-testid="stChatInput"] {border:1px solid #52638d; border-radius:16px;}
-.stButton > button, .stDownloadButton > button {border-radius:12px; border:1px solid #354566; background:#1a2843; color:#e8edf8;}
-.stButton > button:hover {border-color:#a5b4fc; color:#c7d2fe;}
-textarea, input {color:#e8edf8 !important; background:#17233a !important;}
+html, body, [class*="css"], .stApp {font-family:Inter, sans-serif;}
+[data-testid="stAppViewContainer"], .stApp {background:var(--nova-bg) !important; color:var(--nova-text);}
+[data-testid="stHeader"], [data-testid="stDecoration"], [data-testid="stToolbar"],
+[data-testid="stStatusWidget"], [data-testid="stAppDeployButton"],
+[data-testid="stDeployButton"], .stDeployButton, #MainMenu, footer {display:none !important;}
+[data-testid="stSidebar"] {background:var(--nova-panel); border-right:1px solid var(--nova-border);}
+[data-testid="stSidebar"] * {color:var(--nova-text);}
+[data-testid="stAppViewContainer"] [data-testid="stMarkdownContainer"] {color:var(--nova-text);}
+[data-testid="stCaptionContainer"], [data-testid="stSidebar"] [data-testid="stCaptionContainer"] * {color:var(--nova-muted);}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {line-height:1.55;}
+.block-container {max-width:1080px; padding:3rem 2rem 5rem;}
+.brand {font-size:1.5rem; font-weight:800; letter-spacing:.12em; color:var(--nova-accent);}
+.eyebrow {color:var(--nova-accent); font-size:.75rem; letter-spacing:.18em; font-weight:700; margin-top:1.5rem;}
+.hero {font-size:clamp(2.2rem,5vw,3.5rem); line-height:1.12; font-weight:800; letter-spacing:-.045em; margin:1rem 0; color:var(--nova-text);}
+.subtitle {color:var(--nova-muted); font-size:1.05rem; line-height:1.7; max-width:620px; margin-bottom:2rem;}
+.pill {display:inline-block; padding:7px 12px; border:1px solid var(--nova-border); border-radius:30px; color:var(--nova-muted); font-size:.8rem;}
+[data-testid="stChatMessage"] {background:var(--nova-panel) !important; border:1px solid var(--nova-border); border-radius:18px; margin:1rem 0; padding:1.1rem 1.25rem;}
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] * {color:var(--nova-text);}
+[data-testid="stBottom"], [data-testid="stBottom"] > div {background:var(--nova-bg) !important;}
+[data-testid="stChatInput"] {border:1px solid var(--nova-border); border-radius:16px; background:var(--nova-input) !important;}
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] > div > div {background:transparent !important;}
+[data-testid="stChatInput"] textarea,
+[data-testid="stChatInput"] textarea::placeholder {color:var(--nova-text) !important; opacity:1;}
+[data-testid="stChatInput"] textarea::placeholder {color:var(--nova-muted) !important; opacity:1;}
+.stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] button {
+    border-radius:12px; border:1px solid var(--nova-border); background:var(--nova-panel); color:var(--nova-text);
+    min-height:2.75rem; transition:border-color .15s ease, transform .15s ease;
+}
+.stButton > button:hover, .stDownloadButton > button:hover {border-color:var(--nova-accent); color:var(--nova-accent); transform:translateY(-1px);}
+input, textarea {color:var(--nova-text) !important; caret-color:var(--nova-accent);}
+[data-testid="stSidebar"] .stButton > button {text-align:left; justify-content:flex-start;}
+[data-testid="stSidebar"] [data-testid="stTextInput"] input,
+[data-testid="stSidebar"] [data-testid="stTextArea"] textarea {background:var(--nova-input) !important;}
+@media (max-width: 700px) {
+    .block-container {padding:1.5rem 1rem 5rem;}
+    .hero {font-size:clamp(2rem,10vw,3rem);}
+    .subtitle {font-size:1rem; margin-bottom:1.5rem;}
+    .stHorizontalBlock {flex-wrap:wrap; gap:.75rem;}
+    .stHorizontalBlock > [data-testid="column"] {flex:1 1 100%; min-width:100%;}
+    [data-testid="stChatMessage"] {padding:.9rem; border-radius:14px;}
+    [data-testid="stSidebar"] {min-width:min(85vw, 320px);}
+}
 </style>''', unsafe_allow_html=True)
 
 MODEL = 'gpt-5.2'
@@ -139,6 +182,7 @@ def persist():
 with st.sidebar:
     st.markdown('<div class="brand"> NOVA</div>', unsafe_allow_html=True)
     st.caption('A little clarity. A lot of possibility.')
+    st.radio('Appearance', ['System', 'Light', 'Dark'], key='appearance', horizontal=True)
     st.divider()
     if st.button('＋ New conversation', use_container_width=True):
         st.session_state.messages = []
