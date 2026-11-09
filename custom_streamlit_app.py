@@ -85,9 +85,13 @@ st.markdown('<style>' + appearance_themes[st.session_state.appearance] + '''
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 html, body, [class*="css"], .stApp {font-family:Inter, sans-serif;}
 [data-testid="stAppViewContainer"], .stApp {background:var(--nova-bg) !important; color:var(--nova-text);}
-[data-testid="stHeader"], [data-testid="stDecoration"], [data-testid="stToolbar"],
-[data-testid="stStatusWidget"], [data-testid="stAppDeployButton"],
-[data-testid="stDeployButton"], .stDeployButton, #MainMenu, footer {display:none !important;}
+[data-testid="stHeader"] {display:block !important; background:transparent !important;}
+[data-testid="stToolbar"] {display:flex !important; background:transparent !important;}
+[data-testid="stDecoration"], [data-testid="stStatusWidget"],
+[data-testid="stAppDeployButton"], [data-testid="stDeployButton"], .stDeployButton,
+#MainMenu, button[aria-label="Main menu"], footer {display:none !important;}
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"] {display:flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;}
 [data-testid="stSidebar"] {background:var(--nova-panel); border-right:1px solid var(--nova-border);}
 [data-testid="stSidebar"] * {color:var(--nova-text);}
 [data-testid="stAppViewContainer"] [data-testid="stMarkdownContainer"] {color:var(--nova-text);}
